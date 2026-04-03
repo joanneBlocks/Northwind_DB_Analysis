@@ -1,0 +1,83 @@
+-- ============================================================
+-- Northwind Database SQL Queries
+-- ============================================================
+
+
+-- ============================================================
+-- TASK 1: Connecting to the Northwind Database
+-- ============================================================
+
+-- Connect to the Northwind database using psql:
+-- psql northwind
+
+-- List all tables in the database:
+\dt
+
+
+-- ============================================================
+-- TASK 2: Basic SQL Queries
+-- ============================================================
+
+-- Retrieve the first 10 records from the Customers table
+SELECT *
+FROM customers
+LIMIT 10;
+
+-- Display product name and unit price for products
+-- with a unit price greater than $50
+SELECT product_name, unit_price
+FROM products
+WHERE unit_price > 50;
+
+
+-- ============================================================
+-- TASK 3: Filtering and Sorting
+-- ============================================================
+
+-- Retrieve details of orders placed by customers located in the USA
+SELECT o.*
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+WHERE c.country = 'USA';
+
+-- List employees born after 1960, sorted by birth date ascending
+SELECT *
+FROM employees
+WHERE birth_date > '1960-12-31'
+ORDER BY birth_date ASC;
+
+
+-- ============================================================
+-- TASK 4: Aggregation and Grouping
+-- ============================================================
+
+-- Find the total number of products in each category
+SELECT c.category_name, COUNT(p.product_id) AS total_products
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+GROUP BY c.category_name;
+
+-- Calculate the average unit price for products
+-- in each supplier's catalog
+SELECT s.company_name, ROUND(AVG(p.unit_price)::numeric, 2) AS avg_price
+FROM products p
+JOIN suppliers s ON p.supplier_id = s.supplier_id
+GROUP BY s.company_name;
+
+
+-- ============================================================
+-- TASK 5: Join Operations
+-- ============================================================
+
+-- Retrieve order details including product names,
+-- quantities, and prices for all orders
+SELECT o.order_id, p.product_name, od.quantity, od.unit_price
+FROM order_details od
+JOIN orders o ON od.order_id = o.order_id
+JOIN products p ON od.product_id = p.product_id;
+
+-- List customers who have not placed any orders
+SELECT c.customer_id, c.company_name
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL;
